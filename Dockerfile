@@ -5,7 +5,7 @@ FROM golang:1.23 AS builder
 WORKDIR /app
 
 # Copy Go modules and download dependencies
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # Copy source code into the container
@@ -15,7 +15,7 @@ COPY . .
 RUN go generate ./...
 RUN go build -o bin/ -tags='netgo timetzdata' -trimpath -a -ldflags '-s -w ' ./cmd/redirect
 
-FROM docker.io/chromedp/headless-shell
+FROM scratch
 
 COPY --from=builder /app/bin/* /usr/bin/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
